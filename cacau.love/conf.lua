@@ -3,9 +3,6 @@
 -- Configurarion file: Configurations
 --
 
-G_SCALE = 0.375
-GLOBAL_SCALE = 0.375
-
 ConfigTable = {}
 
 function love.conf(t)

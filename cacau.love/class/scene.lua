@@ -10,10 +10,10 @@ function Scene:new()
     self.x = love.graphics.getWidth() / 2 - (self.image:getWidth()/2)
     self.width = self.image:getWidth()
     self.height = self.image:getHeight()
-    self.scalex = GLOBAL_SCALE
-    self.scaley = GLOBAL_SCALE
+    self.sx = GLOBAL.SCALE
+    self.sy = GLOBAL.SCALE
 end
 
 function Scene:draw()
-    love.graphics.draw(self.image, 0, 0, 0, self.scalex, self.scaley)
+    love.graphics.draw(self.image, 0, 0, 0, self.sx, self.sy)
 end
