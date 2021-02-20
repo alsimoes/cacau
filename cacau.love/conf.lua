@@ -3,18 +3,20 @@
 -- Configurarion file: Configurations
 --
 
-_SCALE = 0.375
+G_SCALE = 0.375
 
 ConfigTable = {}
 
 function love.conf(t)
-    t.window.title = "Cacao"
-    t.window.icon = "assets/dumm_cocoa.png"
-    t.version = "11.3"
-    t.console = true 
-    t.window.width = 1024
+    t.window.title  = "Cacao"
+    t.window.icon   = "assets/dumm_cocoa.png"
+    t.version       = "11.3"
+    t.console       = true 
+    t.window.width  = 1024
     t.window.height = 768
-    ConfigTable = t
+    t.window.x      = 1450
+    t.window.y      = 150
+    ConfigTable     = t
 end
 
 
