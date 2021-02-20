@@ -4,7 +4,11 @@
 --
 
 function love.load()
-    bg    = love.graphics.newImage("assets/dummy_bg.png")
+    Object = require("lib.classic")
+    require "class.scene"
+
+    scene = Scene()
+    
     tree  = love.graphics.newImage("assets/dummy_tree.png")
     chest = love.graphics.newImage("assets/dummy_chest.png")
     cocoa = love.graphics.newImage("assets/dumm_cocoa.png")
@@ -15,7 +19,8 @@ function love.update()
 end
 
 function love.draw()
-    love.graphics.draw(bg, 0, 0, 0, G_SCALE, G_SCALE)
+    scene:draw()
+    
     love.graphics.draw(tree, love.graphics.getWidth()/2, 115, 0, G_SCALE, G_SCALE, tree:getWidth()/2)
     love.graphics.draw(chest, love.graphics.getWidth()/2, 650, 0, G_SCALE, G_SCALE, chest:getWidth()/2)
     love.graphics.draw(cocoa, 460,235, 0, G_SCALE, G_SCALE, cocoa:getWidth()/2)
