@@ -10,8 +10,8 @@ function Scene:new()
     self.x = love.graphics.getWidth() / 2 - (self.image:getWidth()/2)
     self.width = self.image:getWidth()
     self.height = self.image:getHeight()
-    self.sx = G.REF.SCALE
-    self.sy = G.REF.SCALE
+    self.scale_x = GLOBAL.SCALE.FACTOR
+    self.scale_y = GLOBAL.SCALE.FACTOR
     self.font = love.graphics.newFont("assets/GloriaHallelujah-Regular.ttf")
     self.hi_score = {
         label_color = {0, 0, 0},
@@ -25,24 +25,34 @@ function Scene:new()
         value_y = 35,
         value = 0
     }
-    self.score = {
+    self.score = { -- #FIXME #7
         label_color = {0, 0, 0},
         label_size = 20,
         label_text = "Score",
-        label_x = G.SCR.WIDTH - 100,
+        label_x = GLOBAL.SCREEN.WIDTH - 100,
         label_y = 15,
         value_color = {0, 0, 1},
         value_size = 32,
-        value_x = G.SCR.WIDTH - 100,
+        value_x = GLOBAL.SCREEN.WIDTH - 100,
         value_y = 35,
         value = 0
     }
-    
-    self.timer_text = "Time"
+    self.timer = { -- #FIXME: #12 Implamente the timer.
+        label_color = {0, 0, 0},
+        label_size = 20,
+        label_text = "Timer",
+        label_x = GLOBAL.SCREEN.WIDTH - 100,
+        label_y = 15,
+        value_color = {0, 0, 1},
+        value_size = 32,
+        value_x = GLOBAL.SCREEN.WIDTH - 100,
+        value_y = 35,
+        value = 0
+    }
 end
 
 function Scene:draw()
-    love.graphics.draw(self.image, 0, 0, 0, self.sx, self.sy)
+    love.graphics.draw(self.image, 0, 0, 0, self.scale_x, self.scale_y)
 
     -- Display hi-score
     love.graphics.setColor(self.hi_score.label_color)
@@ -61,4 +71,7 @@ function Scene:draw()
     love.graphics.setFont(love.graphics.newFont(self.score.value_size))
     love.graphics.print(self.score.value, self.score.value_x, self.score.value_y)
     love.graphics.setColor(255, 255, 255)
+
+    -- #FIXME: #12 Implamente the timer.
+    
 end

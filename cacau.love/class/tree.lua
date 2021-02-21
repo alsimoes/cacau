@@ -11,12 +11,12 @@ function Tree:new(x, y)
     self.y = y
     self.width = self.image:getWidth()
     self.height = self.image:getHeight()
-    self.sx = G.REF.SCALE
-    self.sy = G.REF.SCALE
-    self.ox = self.image:getWidth() / 2
-    self.oy = self.image:getHeight() / 2
+    self.scale_x = GLOBAL.SCALE.FACTOR
+    self.scale_y = GLOBAL.SCALE.FACTOR
+    self.offset_x = self.image:getWidth() / 2
+    self.offset_y = self.image:getHeight() / 2
 end
 
 function Tree:draw(x, y)
-    love.graphics.draw(self.image, self.x, self.y, 0, self.sx, self.sy, self.ox)
+    love.graphics.draw(self.image, self.x, self.y, 0, self.scale_x, self.scale_y, self.offset_x)
 end

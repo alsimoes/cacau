@@ -10,7 +10,7 @@ function love.conf(t)
     t.window.icon   = "assets/dumm_cocoa.png"
     t.version       = "11.3"
     t.console       = true 
-    t.window.width  = 1024
+    t.window.width  = 1024 -- #FIXME: #9 Handle resolution change.
     t.window.height = 768
     t.window.x      = 1450
     t.window.y      = 150
