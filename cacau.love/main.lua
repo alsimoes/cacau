@@ -3,13 +3,20 @@
 -- Main file: Let't begin to play
 --
 
-GLOBAL = {
-    SCALE = 0.375,
-    CENTER_WITH = love.graphics.getWidth() / 2,
-    CENTER_HEIGHT = love.graphics.getHeight() / 2,
-    DIRECTION = {
+G = {
+    REF = {
+        SCALE = 0.375,
         LEFT = 1,
         RIGHT = -1
+    },
+    SCR = {
+        WIDTH = love.graphics.getWidth(),
+        HEIGHT = love.graphics.getHeight(),
+        HCENTER = love.graphics.getWidth() / 2,
+        VCENTER = love.graphics.getHeight() / 2,
+    },
+    PLAYER = {
+        HI_SCORE = 0
     }
 }
 
@@ -20,34 +27,53 @@ function love.load()
     require "class.chest"
     require "class.cocoa"
 
-    scene = Scene()
-    tree  = Tree(GLOBAL.CENTER_WITH, 115)
-    chest = Chest(GLOBAL.CENTER_WITH, 650)
+    Font = love.graphics.newFont("assets/GloriaHallelujah-Regular.ttf")
 
-    -- listOfCocoas = {}
-    cocoa = Cocoa(460, 235, GLOBAL.DIRECTION.LEFT)
-    
+    scene = Scene()
+    tree  = Tree(G.SCR.HCENTER, 115)
+    chest = Chest(G.SCR.HCENTER, 650)
+
+    listOfCocoas = {}
+    table.insert(listOfCocoas, Cocoa(460, 235, G.REF.LEFT))
+    table.insert(listOfCocoas, Cocoa(470, 385, G.REF.LEFT))
+    table.insert(listOfCocoas, Cocoa(550, 285, G.REF.RIGHT))
+    table.insert(listOfCocoas, Cocoa(550, 385, G.REF.RIGHT))    
 end
 
 function love.keypressed(key)
     if key == "escape" then
-        love.event.quit()
+        love.event.quit(0)
     end
+end
 
+function love.mousepressed(x, y, button, istouch)
+    for i,cocoa in ipairs(listOfCocoas) do
+        cocoa:mousepressed(x, y, button, istouch)
+    end
+end
+
+function love.mousereleased(x, y, button)
+    for i,cocoa in ipairs(listOfCocoas) do
+        cocoa:mousereleased(x, y, button)
+    end
 end
 
 function love.update()
-    
+    for i,cocoa in ipairs(listOfCocoas) do
+        cocoa:update(dt)
+        -- bullet:checkCollision(enemy)
+        -- bullet:checkMissedShot()
+        if cocoa.rotten then
+            table.remove(listOfCocoas, i)
+        end
+    end
 end
 
 function love.draw()
     scene:draw()
     tree:draw()
     chest:draw()
-    cocoa:draw()
-    
-    -- love.graphics.draw(cocoa, 460,235, 0, GLOBAL.SCALE, GLOBAL.SCALE, cocoa:getWidth()/2)
-    -- love.graphics.draw(cocoa, 470,385, 0, GLOBAL.SCALE, GLOBAL.SCALE, cocoa:getWidth()/2)
-    -- love.graphics.draw(cocoa, 550,355, 0, -GLOBAL.SCALE, GLOBAL.SCALE, cocoa:getWidth()/2)
-    -- love.graphics.draw(cocoa, 550,245, 0, -GLOBAL.SCALE, GLOBAL.SCALE, cocoa:getWidth()/2)
+    for i,cocoa in ipairs(listOfCocoas) do
+        cocoa:draw()
+    end
 end
