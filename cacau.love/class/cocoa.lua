@@ -5,8 +5,14 @@
 
 Cocoa = Object:extend()
 
-function Cocoa:new(x, y, direcion)
-    self.image = love.graphics.newImage("assets/dumm_cocoa.png")
+function Cocoa:new(x, y, direcion, s)
+    self.image = love.graphics.newImage("assets/dummy_cocoa_green.png")
+    self.cocoa_images = {
+        green = love.graphics.newImage("assets/dummy_cocoa_green.png"),
+        yellow = love.graphics.newImage("assets/dummy_cocoa_yellow.png"),
+        red = love.graphics.newImage("assets/dummy_cocoa_red.png"),
+        purple = love.graphics.newImage("assets/dummy_cocoa_purple.png")
+    }
     self.x = x
     self.y = y
     self.original_position_x = x 
@@ -20,7 +26,6 @@ function Cocoa:new(x, y, direcion)
     self.offset_x = self.image:getWidth() / 2
     self.offset_y = self.image:getHeight() / 2
     self.side = direcion
-    self.rotten = false
     self.was_harvested = false
     self.handling = {
         active = false,
@@ -37,6 +42,16 @@ function Cocoa:new(x, y, direcion)
         color = {255,0,0},
         collision_color = {0, 0, 255}
     }
+    self.rotten = false
+    -- self.state = GLOBAL.COCOA.GREEN
+    self.state = s
+    self.last_state_time = t
+end
+
+function Cocoa:update_cocoa_table()
+
+    print("update_cocoa_table")
+    
 end
 
 function Cocoa:update_collision_shape()
@@ -89,6 +104,14 @@ function Cocoa:check_collision(obj)
 end
 
 function Cocoa:update(dt)
+
+    if "start" then
+        table.insert(list_of_cocoas, Cocoa(460, 235, GLOBAL.SCALE.NORMAL, GLOBAL.COCOA.GREEN))
+        table.insert(list_of_cocoas, Cocoa(470, 385, GLOBAL.SCALE.NORMAL, GLOBAL.COCOA.YELLOW))
+        table.insert(list_of_cocoas, Cocoa(550, 285, GLOBAL.SCALE.INVERTED, GLOBAL.COCOA.RED))
+        table.insert(list_of_cocoas, Cocoa(550, 385, GLOBAL.SCALE.INVERTED, GLOBAL.COCOA.PURPLE))
+    end
+
     if self.handling.active then
         self.x = love.mouse.getX() - self.handling.distx
         self.y = love.mouse.getY() - self.handling.disty
@@ -103,3 +126,4 @@ function Cocoa:draw(x, y)
         love.graphics.setColor(GLOBAL.SCREEN.COLOR_RESET)
     end
 end
+

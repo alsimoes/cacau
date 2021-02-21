@@ -7,7 +7,7 @@ ConfigTable = {}
 
 function love.conf(t)
     t.window.title  = "Cacao"
-    t.window.icon   = "assets/dumm_cocoa.png"
+    t.window.icon   = "assets/dummy_icon.png"
     t.version       = "11.3"
     t.console       = true 
     t.window.width  = 1024 -- #FIXME: #9 Handle resolution change.

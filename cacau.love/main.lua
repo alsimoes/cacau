@@ -3,6 +3,8 @@
 -- Main file: Let't begin to play
 --
 
+
+
 GLOBAL = {
     SCALE = {
         FACTOR = 0.375,
@@ -19,27 +21,29 @@ GLOBAL = {
     },
     PLAYER = {
         HI_SCORE = 0
+    },
+    COCOA = {
+        GREEN = 1,
+        YELLOW = 2,
+        RED = 3,
+        PURPLE = 4,
     }
 }
 
 function love.load()
     Object = require("lib.classic")
     require "class.scene"
+    require "class.player"
     require "class.tree"
     require "class.chest"
     require "class.cocoa"
 
-    Font = love.graphics.newFont("assets/GloriaHallelujah-Regular.ttf")
-
     scene = Scene()
+    love.mouse.setVisible(false)
+    player = Player(love.mouse.getPosition())
     tree  = Tree(GLOBAL.SCREEN.HCENTER, 115)
     chest = Chest(GLOBAL.SCREEN.HCENTER, 650)
-
-    listOfCocoas = {}
-    table.insert(listOfCocoas, Cocoa(460, 235, GLOBAL.SCALE.NORMAL))
-    table.insert(listOfCocoas, Cocoa(470, 385, GLOBAL.SCALE.NORMAL))
-    table.insert(listOfCocoas, Cocoa(550, 285, GLOBAL.SCALE.INVERTED))
-    table.insert(listOfCocoas, Cocoa(550, 385, GLOBAL.SCALE.INVERTED))    
+    
 end
 
 function love.keypressed(key)
@@ -50,38 +54,58 @@ function love.keypressed(key)
     if key == "r" then
         love.event.quit("restart")
     end
+
+    if key == "s" then
+        -- #TODO: #13 Implement start game.
+    end
+
+    if key == "c" then
+        
+    end
+
 end
 
 function love.mousepressed(x, y, button, istouch)
-    for i,cocoa in ipairs(listOfCocoas) do
-        cocoa:mouse_pressed(x, y, button, istouch)
+    if scene:get_list_of_cocoas() ~= nil then
+        for i,cocoa in ipairs(scene:get_list_of_cocoas()) do
+            cocoa:mouse_pressed(x, y, button, istouch)
+        end
     end
+
 end
 
 function love.mousereleased(x, y, button)
-    for i,cocoa in ipairs(listOfCocoas) do
-        cocoa:mouse_released(x, y, button)
+    if scene:get_cocoas_list() ~= nil then
+        for i,cocoa in ipairs(scene:get_list_of_cocoas()) do
+            cocoa:mouse_released(x, y, button)
+        end
     end
 end
 
 function love.update()
-    for i,cocoa in ipairs(listOfCocoas) do
-        cocoa:update(dt)
-        cocoa:check_collision(chest)
-        cocoa:update_collision_shape()
-        -- #FIXME: #11 Implement "cocoa:checkCollision(player)"
-        -- bullet:checkMissedShot()
-        if cocoa.harvested then
-            table.remove(listOfCocoas, i)
+    
+    if scene:get_cocoas_list() ~= nil then
+        for i,cocoa in ipairs(scene:get_list_of_cocoas()) do
+            cocoa:update(dt)
+            cocoa:check_collision(chest)
+            cocoa:update_collision_shape()
+            -- #FIXME: #11 Implement "cocoa:checkCollision(player)"
+            -- bullet:checkMissedShot()
+            if cocoa.was_harvested then
+                scene:remove_cocoa_from_list(i)
+            end
         end
     end
+
 end
 
 function love.draw()
     scene:draw()
     tree:draw()
-    for i,cocoa in ipairs(listOfCocoas) do
-        cocoa:draw()
+    if scene:get_list_of_cocoas() ~= nil then
+        for i,cocoa in ipairs(scene:get_list_of_cocoas()) do
+            cocoa:draw()
+        end
     end
     chest:draw()
 end

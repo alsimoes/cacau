@@ -5,9 +5,10 @@
 
 Player = Object:extend() -- #FIXME: #10 Implement the player little hand completely.
 
-function Player:new(x, y, direcion)
+function Player:new(x, y)
     self.type = "player"
-    self.image = love.graphics.newImage("...")
+    self.image = love.graphics.newImage("assets/dummy_hand_open.png")
+    self.grab_image = love.graphics.newImage("assets/dummy_hand_close.png")
     self.x = x
     self.y = y
     self.orginal_position_x = x
@@ -18,8 +19,8 @@ function Player:new(x, y, direcion)
     self.scale_y = GLOBAL.SCALE.FACTOR
     self.scaled_width = self.width * self.scale_x 
     self.scaled_height = self.height * self.scale_y
-    self.offset_x = self.image:getWidth() / 2
-    self.offset_y = self.image:getHeight() / 2
+    -- self.offset_x = self.image:getWidth() / 2
+    -- self.offset_y = self.image:getHeight() / 2
     self.side = direcion
     self.rotten = false
     self.handling = {
@@ -42,5 +43,5 @@ function Player:update(dt)
 end
 
 function Player:draw(x, y)
-
+    love.graphics.draw(self.image, self.x, self.y)
 end

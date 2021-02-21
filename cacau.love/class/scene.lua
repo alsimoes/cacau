@@ -49,12 +49,24 @@ function Scene:new()
         value_y = 35,
         value = 0
     }
+    self.font = love.graphics.newFont("assets/GloriaHallelujah-Regular.ttf")
+
+    self.list_of_cocoas = {}
+
+end
+
+function Scene:get_list_of_cocoas()
+    get_cocoas_list = self.list_of_cocoas
+end
+
+function Scene:remove_cocoa_from_list(i)
+    table.remove(self.list_of_cocoas, i)
 end
 
 function Scene:draw()
     love.graphics.draw(self.image, 0, 0, 0, self.scale_x, self.scale_y)
 
-    -- Display hi-score
+   -- Display hi-score
     love.graphics.setColor(self.hi_score.label_color)
     love.graphics.setFont(love.graphics.newFont(self.hi_score.label_size))
     love.graphics.print(self.hi_score.label_text, self.hi_score.label_x, self.hi_score.label_y)
@@ -73,5 +85,5 @@ function Scene:draw()
     love.graphics.setColor(255, 255, 255)
 
     -- #FIXME: #12 Implamente the timer.
-    
+
 end
