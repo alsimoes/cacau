@@ -3,15 +3,20 @@
 -- Main file: Let't begin to play
 --
 
-GLOBAL = {
-    SCALE = 0.375,
-    CENTER = {
-        WITH = love.graphics.getWidth() / 2,
-        HEIGHT = love.graphics.getHeight() / 2
-    },
-    DIRECTION = {
+G = {
+    REF = {
+        SCALE = 0.375,
         LEFT = 1,
         RIGHT = -1
+    },
+    SCR = {
+        WIDTH = love.graphics.getWidth(),
+        HEIGHT = love.graphics.getHeight(),
+        HCENTER = love.graphics.getWidth() / 2,
+        VCENTER = love.graphics.getHeight() / 2,
+    },
+    PLAYER = {
+        HI_SCORE = 0
     }
 }
 
@@ -22,22 +27,23 @@ function love.load()
     require "class.chest"
     require "class.cocoa"
 
+    Font = love.graphics.newFont("assets/GloriaHallelujah-Regular.ttf")
+
     scene = Scene()
-    tree  = Tree(GLOBAL.CENTER.WITH, 115)
-    chest = Chest(GLOBAL.CENTER.WITH, 650)
+    tree  = Tree(G.SCR.HCENTER, 115)
+    chest = Chest(G.SCR.HCENTER, 650)
 
     listOfCocoas = {}
-    table.insert(listOfCocoas, Cocoa(460, 235, GLOBAL.DIRECTION.LEFT))
-    table.insert(listOfCocoas, Cocoa(470, 385, GLOBAL.DIRECTION.LEFT))
-    table.insert(listOfCocoas, Cocoa(550, 285, GLOBAL.DIRECTION.RIGHT))
-    table.insert(listOfCocoas, Cocoa(550, 385, GLOBAL.DIRECTION.RIGHT))    
+    table.insert(listOfCocoas, Cocoa(460, 235, G.REF.LEFT))
+    table.insert(listOfCocoas, Cocoa(470, 385, G.REF.LEFT))
+    table.insert(listOfCocoas, Cocoa(550, 285, G.REF.RIGHT))
+    table.insert(listOfCocoas, Cocoa(550, 385, G.REF.RIGHT))    
 end
 
 function love.keypressed(key)
     if key == "escape" then
-        love.event.quit()
+        love.event.quit(0)
     end
-
 end
 
 function love.mousepressed(x, y, button, istouch)
