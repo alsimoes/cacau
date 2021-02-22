@@ -37,10 +37,9 @@ function love.load()
     require "class.tree"
     require "class.chest"
     require "class.cocoa"
-
-    scene = Scene()
     love.mouse.setVisible(false)
     player = Player(love.mouse.getPosition())
+    scene = Scene(player)
     tree  = Tree(GLOBAL.SCREEN.HCENTER, 115)
     chest = Chest(GLOBAL.SCREEN.HCENTER, 650)
     
@@ -52,11 +51,14 @@ function love.keypressed(key)
     end
 
     if key == "r" then
+        print("[[[[[[[[[[[[[[-- RESTART --]]]]]]]]]]]]]]")
         love.event.quit("restart")
     end
 
     if key == "s" then
         -- #TODO: #13 Implement start game.
+        scene:make_game_begin(true)
+        scene:add_cocoa_to_list()
     end
 
     if key == "c" then
@@ -66,46 +68,21 @@ function love.keypressed(key)
 end
 
 function love.mousepressed(x, y, button, istouch)
-    if scene:get_list_of_cocoas() ~= nil then
-        for i,cocoa in ipairs(scene:get_list_of_cocoas()) do
-            cocoa:mouse_pressed(x, y, button, istouch)
-        end
-    end
-
+    player:mouse_pressed(x, y, button, istouch)
+    scene:mouse_pressed(x, y, button, istouch)
 end
 
 function love.mousereleased(x, y, button)
-    if scene:get_cocoas_list() ~= nil then
-        for i,cocoa in ipairs(scene:get_list_of_cocoas()) do
-            cocoa:mouse_released(x, y, button)
-        end
-    end
+    player:mouse_released(x, y, button)
+    scene:mouse_released(x, y, button)
 end
 
-function love.update()
-    
-    if scene:get_cocoas_list() ~= nil then
-        for i,cocoa in ipairs(scene:get_list_of_cocoas()) do
-            cocoa:update(dt)
-            cocoa:check_collision(chest)
-            cocoa:update_collision_shape()
-            -- #FIXME: #11 Implement "cocoa:checkCollision(player)"
-            -- bullet:checkMissedShot()
-            if cocoa.was_harvested then
-                scene:remove_cocoa_from_list(i)
-            end
-        end
-    end
-
+function love.update(dt)
+    player:update(dt)
+    scene:update(dt)
 end
 
 function love.draw()
     scene:draw()
-    tree:draw()
-    if scene:get_list_of_cocoas() ~= nil then
-        for i,cocoa in ipairs(scene:get_list_of_cocoas()) do
-            cocoa:draw()
-        end
-    end
-    chest:draw()
+    player:draw()
 end

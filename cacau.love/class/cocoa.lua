@@ -43,13 +43,13 @@ function Cocoa:new(x, y, direcion, s)
         collision_color = {0, 0, 255}
     }
     self.rotten = false
-    -- self.state = GLOBAL.COCOA.GREEN
+    self.state = GLOBAL.COCOA.GREEN
     self.state = s
     self.last_state_time = t
 end
 
 function Cocoa:update_cocoa_table()
-
+    -- #TODO: #14 Confirme necessidade.
     print("update_cocoa_table")
     
 end
@@ -61,9 +61,9 @@ end
 
 function Cocoa:mouse_pressed(x, y, button, istouch)
     if button == 1 
-      and x > self.collision_shape.x 
-      and x < self.collision_shape.x + self.scaled_width 
-      and y > self.collision_shape.y 
+      and x > self.collision_shape.x
+      and x < self.collision_shape.x + self.scaled_width
+      and y > self.collision_shape.y
       and y < self.collision_shape.y + self.scaled_height then
         self.handling.active = true
         self.handling.distx = x - self.x
@@ -96,7 +96,8 @@ function Cocoa:check_collision(obj)
        self_botton > obj_top and
        self_top < obj_botton then
         has_collided = true
-        if has_collided then
+        
+        if has_collided and obj.type == "chest" then
             scene.score.value = scene.score.value + 1
             self.was_harvested = true
         end
@@ -104,14 +105,6 @@ function Cocoa:check_collision(obj)
 end
 
 function Cocoa:update(dt)
-
-    if "start" then
-        table.insert(list_of_cocoas, Cocoa(460, 235, GLOBAL.SCALE.NORMAL, GLOBAL.COCOA.GREEN))
-        table.insert(list_of_cocoas, Cocoa(470, 385, GLOBAL.SCALE.NORMAL, GLOBAL.COCOA.YELLOW))
-        table.insert(list_of_cocoas, Cocoa(550, 285, GLOBAL.SCALE.INVERTED, GLOBAL.COCOA.RED))
-        table.insert(list_of_cocoas, Cocoa(550, 385, GLOBAL.SCALE.INVERTED, GLOBAL.COCOA.PURPLE))
-    end
-
     if self.handling.active then
         self.x = love.mouse.getX() - self.handling.distx
         self.y = love.mouse.getY() - self.handling.disty
@@ -119,6 +112,15 @@ function Cocoa:update(dt)
 end
 
 function Cocoa:draw(x, y)
+    if self.state == GLOBAL.COCOA.GREEN then
+        self.image = self.cocoa_images.green
+    elseif self.state == GLOBAL.COCOA.YELLOW then
+        self.image = self.cocoa_images.yellow
+    elseif self.state == GLOBAL.COCOA.RED then
+        self.image = self.cocoa_images.red
+    elseif self.state == GLOBAL.COCOA.PURPLE then
+        self.image = self.cocoa_images.purple
+    end
     love.graphics.draw(self.image, self.x, self.y, 0, self.side * self.scale_x, self.scale_y, self.offset_x)
     if self.collision_shape.show then
         love.graphics.setColor(self.collision_shape.color)
