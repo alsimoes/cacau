@@ -128,4 +128,3 @@ function Cocoa:draw(x, y)
         love.graphics.setColor(GLOBAL.SCREEN.COLOR_RESET)
     end
 end
-
