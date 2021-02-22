@@ -3,77 +3,86 @@
 -- Main file: Let't begin to play
 --
 
-G = {
-    REF = {
-        SCALE = 0.375,
-        LEFT = 1,
-        RIGHT = -1
+
+
+GLOBAL = {
+    SCALE = {
+        FACTOR = 0.375,
+        INVERTED = -1,
+        NORMAL = 1
     },
-    SCR = {
+    SCREEN = {
         WIDTH = love.graphics.getWidth(),
         HEIGHT = love.graphics.getHeight(),
         HCENTER = love.graphics.getWidth() / 2,
         VCENTER = love.graphics.getHeight() / 2,
+        COLOR_RESET = {255, 255, 255},
+        DISPLAY_COLLISION_SHAPES = false
     },
     PLAYER = {
         HI_SCORE = 0
+    },
+    COCOA = {
+        GREEN = 1,
+        YELLOW = 2,
+        RED = 3,
+        PURPLE = 4,
     }
 }
 
 function love.load()
     Object = require("lib.classic")
     require "class.scene"
+    require "class.player"
     require "class.tree"
     require "class.chest"
     require "class.cocoa"
-
-    Font = love.graphics.newFont("assets/GloriaHallelujah-Regular.ttf")
-
-    scene = Scene()
-    tree  = Tree(G.SCR.HCENTER, 115)
-    chest = Chest(G.SCR.HCENTER, 650)
-
-    listOfCocoas = {}
-    table.insert(listOfCocoas, Cocoa(460, 235, G.REF.LEFT))
-    table.insert(listOfCocoas, Cocoa(470, 385, G.REF.LEFT))
-    table.insert(listOfCocoas, Cocoa(550, 285, G.REF.RIGHT))
-    table.insert(listOfCocoas, Cocoa(550, 385, G.REF.RIGHT))    
+    love.mouse.setVisible(false)
+    player = Player(love.mouse.getPosition())
+    scene = Scene(player)
+    tree  = Tree(GLOBAL.SCREEN.HCENTER, 115)
+    chest = Chest(GLOBAL.SCREEN.HCENTER, 650)
+    
 end
 
 function love.keypressed(key)
     if key == "escape" then
         love.event.quit(0)
     end
+
+    if key == "r" then
+        print("[[[[[[[[[[[[[[-- RESTART --]]]]]]]]]]]]]]")
+        love.event.quit("restart")
+    end
+
+    if key == "s" then
+        -- #TODO: #13 Implement start game.
+        scene:make_game_begin(true)
+        scene:add_cocoa_to_list()
+    end
+
+    if key == "c" then
+        
+    end
+
 end
 
 function love.mousepressed(x, y, button, istouch)
-    for i,cocoa in ipairs(listOfCocoas) do
-        cocoa:mousepressed(x, y, button, istouch)
-    end
+    player:mouse_pressed(x, y, button, istouch)
+    scene:mouse_pressed(x, y, button, istouch)
 end
 
 function love.mousereleased(x, y, button)
-    for i,cocoa in ipairs(listOfCocoas) do
-        cocoa:mousereleased(x, y, button)
-    end
+    player:mouse_released(x, y, button)
+    scene:mouse_released(x, y, button)
 end
 
-function love.update()
-    for i,cocoa in ipairs(listOfCocoas) do
-        cocoa:update(dt)
-        -- bullet:checkCollision(enemy)
-        -- bullet:checkMissedShot()
-        if cocoa.rotten then
-            table.remove(listOfCocoas, i)
-        end
-    end
+function love.update(dt)
+    player:update(dt)
+    scene:update(dt)
 end
 
 function love.draw()
     scene:draw()
-    tree:draw()
-    chest:draw()
-    for i,cocoa in ipairs(listOfCocoas) do
-        cocoa:draw()
-    end
+    player:draw()
 end
