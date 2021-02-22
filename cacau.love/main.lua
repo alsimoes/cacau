@@ -57,7 +57,7 @@ function love.keypressed(key)
 
     if key == "s" then
         -- #TODO: #13 Implement start game.
-        scene:make_game_begin(true)
+        scene:is_game_over(false)
         scene:add_cocoa_to_list()
     end
 

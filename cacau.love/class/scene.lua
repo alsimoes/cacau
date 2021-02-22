@@ -55,9 +55,9 @@ function Scene:new(player)
             value_y = 35,
             value = 0,
             start_time = 10,
-            running_timer = 0
+            remaining_time = 0
         },
-        start_game = false
+        game_over = true
     }
 
 end
@@ -99,30 +99,30 @@ function Scene:mouse_released(x, y, button)
     end
 end
 
-function Scene:make_game_begin(bol)
-    self.harvesting.start_game = bol
-    self.harvesting.timer.running_timer = 0
+function Scene:is_game_over(bol)
+    self.harvesting.game_over = bol
+    self.score.value = 0
 end
 
 function Scene:is_game_started()
-    is_game_started = self.harvesting.start_game
+    is_game_started = self.harvesting.game_over
 end
 
 function Scene:update(dt)
-    if self.harvesting.start_game == true and self.harvesting.timer.running_timer == 0 then
-        self.harvesting.timer.running_timer = self.harvesting.timer.start_time
+    if self.harvesting.game_over == false and self.harvesting.timer.remaining_time <= 0 then
+        self.harvesting.timer.remaining_time = self.harvesting.timer.start_time
     end
-    if self.harvesting.start_game and self.harvesting.timer.running_timer > 0 then
-        self.harvesting.timer.running_timer = self.harvesting.timer.running_timer - dt
+    if self.harvesting.game_over == false and self.harvesting.timer.remaining_time > 0 then
+        self.harvesting.timer.remaining_time = self.harvesting.timer.remaining_time - dt
+        self.harvesting.timer.value = self.harvesting.timer.remaining_time
     end
-    if self.harvesting.timer.running_timer <= 0 then 
-        if self.score.value > self.hi_score.value then
-            self.hi_score.value = self.score.value
-        end
-        self.score.value = 0
-        self.harvesting.start_game = false
+    if self.harvesting.timer.remaining_time <= 0 then 
+        self.harvesting.game_over = true
         for i,cocoa in ipairs(self.list_of_cocoas) do
             table.remove(self.list_of_cocoas, i)
+        end
+        if self.score.value > self.hi_score.value then
+            self.hi_score.value = self.score.value
         end
     end
     for i,cocoa in ipairs(self.list_of_cocoas) do
@@ -136,42 +136,53 @@ function Scene:update(dt)
     end
 end
 
+function Scene:update_display_hud(p)
+    love.graphics.setColor(p.label_color)
+    love.graphics.setFont(love.graphics.newFont(p.label_size))
+    love.graphics.print(p.label_text, p.label_x, p.label_y)
+    love.graphics.setColor(p.value_color)
+    love.graphics.setFont(love.graphics.newFont(p.value_size))
+    love.graphics.print(p.value, p.value_x, p.value_y)
+    love.graphics.setColor(GLOBAL.SCREEN.COLOR_RESET)
+end
+
 function Scene:draw()
     love.graphics.draw(self.image, 0, 0, 0, self.scale_x, self.scale_y)
+    
     tree:draw()
+
     for i,cocoa in ipairs(self.list_of_cocoas) do
         cocoa:draw()
     end
 
     chest:draw()
 
-    -- Display hi-score
+    -- self.update_display_hud(self.hi_score)
     love.graphics.setColor(self.hi_score.label_color)
     love.graphics.setFont(love.graphics.newFont(self.hi_score.label_size))
     love.graphics.print(self.hi_score.label_text, self.hi_score.label_x, self.hi_score.label_y)
     love.graphics.setColor(self.hi_score.value_color)
     love.graphics.setFont(love.graphics.newFont(self.hi_score.value_size))
     love.graphics.print(self.hi_score.value, self.hi_score.value_x, self.hi_score.value_y)
-    love.graphics.setColor(255, 255, 255)
+    love.graphics.setColor(GLOBAL.SCREEN.COLOR_RESET)
 
-    if self.harvesting.start_game then
+    -- self.update_display_hud(self.score)
+    love.graphics.setColor(self.score.label_color)
+    love.graphics.setFont(love.graphics.newFont(self.score.label_size))
+    love.graphics.print(self.score.label_text, self.score.label_x, self.score.label_y)
+    love.graphics.setColor(self.score.value_color)
+    love.graphics.setFont(love.graphics.newFont(self.score.value_size))
+    love.graphics.print(self.score.value, self.score.value_x, self.score.value_y)
+    love.graphics.setColor(GLOBAL.SCREEN.COLOR_RESET)
 
-        -- Display score
-        love.graphics.setColor(self.score.label_color)
-        love.graphics.setFont(love.graphics.newFont(self.score.label_size))
-        love.graphics.print(self.score.label_text, self.score.label_x, self.score.label_y)
-        love.graphics.setColor(self.score.value_color)
-        love.graphics.setFont(love.graphics.newFont(self.score.value_size))
-        love.graphics.print(self.score.value, self.score.value_x, self.score.value_y)
-        love.graphics.setColor(255, 255, 255)
-
-        -- Display timer
-        love.graphics.setColor(self.harvesting.timer.label_color)
-        love.graphics.setFont(love.graphics.newFont(self.harvesting.timer.label_size))
-        love.graphics.print(self.harvesting.timer.label_text, self.harvesting.timer.label_x, self.harvesting.timer.label_y)
-        love.graphics.setColor(self.harvesting.timer.value_color)
-        love.graphics.setFont(love.graphics.newFont(self.harvesting.timer.value_size))
-        love.graphics.print(self.harvesting.timer.value, self.harvesting.timer.value_x, self.harvesting.timer.value_y)
-        love.graphics.setColor(255, 255, 255)
-    end
+    -- self.update_display_hud(self.harvesting.timer)
+    love.graphics.setColor(self.harvesting.timer.label_color)
+    love.graphics.setFont(love.graphics.newFont(self.harvesting.timer.label_size))
+    love.graphics.print(self.harvesting.timer.label_text, self.harvesting.timer.label_x, self.harvesting.timer.label_y)
+    love.graphics.setColor(self.harvesting.timer.value_color)
+    love.graphics.setFont(love.graphics.newFont(self.harvesting.timer.value_size))
+    love.graphics.print(string.format("%3.1f",self.harvesting.timer.value), self.harvesting.timer.value_x, self.harvesting.timer.value_y)
+    love.graphics.setColor(GLOBAL.SCREEN.COLOR_RESET)
+    
 end
+
