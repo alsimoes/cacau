@@ -12,8 +12,8 @@ function love.conf(t)
     t.console       = true 
     t.window.width  = 1024 -- #FIXME: #9 Handle resolution change.
     t.window.height = 768
-    t.window.x      = 1450
-    t.window.y      = 150
+    t.window.x      = 990
+    t.window.y      = 70
     ConfigTable     = t
 end
 

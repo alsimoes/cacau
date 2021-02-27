@@ -48,6 +48,11 @@ function Cocoa:new(x, y, direcion, s)
     self.last_state_time = t
 end
 
+function get_older()
+    local state = self.state
+    
+end
+
 function Cocoa:update_cocoa_table()
     -- #TODO: #14 Confirme necessidade.
     print("update_cocoa_table")

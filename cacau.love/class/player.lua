@@ -14,8 +14,8 @@ function Player:new(x, y)
     self.orginal_position_y = y
     self.width = self.image:getWidth()
     self.height = self.image:getHeight()
-    self.scale_x = GLOBAL.SCALE.FACTOR
-    self.scale_y = GLOBAL.SCALE.FACTOR
+    self.scale_x = GLOBAL.SCALE.FACTOR * 0.65
+    self.scale_y = GLOBAL.SCALE.FACTOR * 0.65
     self.scaled_width = self.width * self.scale_x 
     self.scaled_height = self.height * self.scale_y
     self.offset_x = (self.image:getWidth() / 2)
