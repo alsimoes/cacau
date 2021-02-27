@@ -39,9 +39,6 @@ function Scene:new(player)
         value = 0
     }
     
-    self.list_of_cocoas = {}
-    self.player = player
-
     self.harvesting = {
         timer = { -- #FIXME: #12 Implamente the timer.
             label_color = {0, 0, 0},
@@ -54,37 +51,37 @@ function Scene:new(player)
             value_x = GLOBAL.SCREEN.WIDTH /2 ,
             value_y = 35,
             value = 0,
-            start_time = 10,
+            start_time = 20,
             remaining_time = 0
         },
         game_over = true
     }
 
+    self.spot = {}
+
+    table.insert(self.spot, {id = 1, x = 460, y = 235, direction = GLOBAL.SCALE.NORMAL})
+    table.insert(self.spot, {id = 2, x = 470, y = 385, direction = GLOBAL.SCALE.NORMAL})
+    table.insert(self.spot, {id = 3, x = 550, y = 285, direction = GLOBAL.SCALE.INVERTED})
+    table.insert(self.spot, {id = 4, x = 555, y = 388, direction = GLOBAL.SCALE.INVERTED})  
+
+    self.list_of_cocoas = {}
+    self.player = player
+
 end
 
-function Scene:get_list_of_cocoas() -- #TODO: #15 Verificar se está em uso.
-    get_cocoas_list = self.list_of_cocoas
+function Scene:respawn_cocoas()
+    -- #TODO: #18 Add respwn mechanics
 end
 
-function Scene:remove_cocoa_from_list(i)
-    table.remove(self.list_of_cocoas, i)
-end
-
-function Scene:total_of_cocoas()
-    local cont = 0
-    for i,cocoa in ipairs(self.list_of_cocoas) do
-        cont = cont + 1
+function Scene:add_cocoa_to_list(dt)
+    -- table.insert(self.list_of_cocoas, Cocoa(460, 235, GLOBAL.SCALE.NORMAL))
+    -- table.insert(self.list_of_cocoas, Cocoa(self.spot[1].x, self.spot[1].y, self.spot[1].direction))
+    -- table.insert(self.list_of_cocoas, Cocoa(self.spot[2].x, self.spot[2].y, self.spot[2].direction))
+    -- table.insert(self.list_of_cocoas, Cocoa(self.spot[3].x, self.spot[3].y, self.spot[3].direction))
+    -- table.insert(self.list_of_cocoas, Cocoa(self.spot[4].x, self.spot[4].y, self.spot[4].direction))
+    for x=1, 4 do
+        table.insert(self.list_of_cocoas, Cocoa(self.spot[x].x, self.spot[x].y, self.spot[x].direction))
     end
-    print("Total de cacaus: "..cont)
-    total_of_cocoas = cont
-end
-
-function Scene:add_cocoa_to_list()
-    table.insert(self.list_of_cocoas, Cocoa(460, 235, GLOBAL.SCALE.NORMAL, GLOBAL.COCOA.GREEN))
-    table.insert(self.list_of_cocoas, Cocoa(470, 385, GLOBAL.SCALE.NORMAL, GLOBAL.COCOA.YELLOW))
-    table.insert(self.list_of_cocoas, Cocoa(550, 285, GLOBAL.SCALE.INVERTED, GLOBAL.COCOA.RED))
-    table.insert(self.list_of_cocoas, Cocoa(550, 385, GLOBAL.SCALE.INVERTED, GLOBAL.COCOA.PURPLE))
-
 end
 
 function Scene:mouse_pressed(x, y, button, istouch)
@@ -130,7 +127,7 @@ function Scene:update(dt)
         cocoa:check_collision(chest)
         cocoa:check_collision(self.player)
         cocoa:update_collision_shape()
-        if cocoa.was_harvested then
+        if cocoa.was_harvested or cocoa.is_rotten then
             table.remove(self.list_of_cocoas, i)
         end
     end

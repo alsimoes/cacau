@@ -45,7 +45,7 @@ function love.load()
     
 end
 
-function love.keypressed(key)
+function love.keypressed(key, dt)
     if key == "escape" then
         love.event.quit(0)
     end
@@ -56,13 +56,9 @@ function love.keypressed(key)
     end
 
     if key == "s" then
-        -- #TODO: #13 Implement start game.
+        print("[[[[[[[[[[[[[[-- GAME START --]]]]]]]]]]]]]]")
         scene:is_game_over(false)
-        scene:add_cocoa_to_list()
-    end
-
-    if key == "c" then
-        
+        scene:add_cocoa_to_list(dt)
     end
 
 end

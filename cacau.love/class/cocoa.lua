@@ -5,10 +5,9 @@
 
 Cocoa = Object:extend()
 
-function Cocoa:new(x, y, direcion, s)
+function Cocoa:new(x, y, direction)
     self.image = love.graphics.newImage("assets/dummy_cocoa_green.png")
     self.cocoa_images = {
-        green = love.graphics.newImage("assets/dummy_cocoa_green.png"),
         yellow = love.graphics.newImage("assets/dummy_cocoa_yellow.png"),
         red = love.graphics.newImage("assets/dummy_cocoa_red.png"),
         purple = love.graphics.newImage("assets/dummy_cocoa_purple.png")
@@ -25,7 +24,7 @@ function Cocoa:new(x, y, direcion, s)
     self.scaled_height = self.height * self.scale_y
     self.offset_x = self.image:getWidth() / 2
     self.offset_y = self.image:getHeight() / 2
-    self.side = direcion
+    self.side = direction
     self.was_harvested = false
     self.handling = {
         active = false,
@@ -42,21 +41,9 @@ function Cocoa:new(x, y, direcion, s)
         color = {255,0,0},
         collision_color = {0, 0, 255}
     }
-    self.rotten = false
+    self.is_rotten = false
     self.state = GLOBAL.COCOA.GREEN
-    self.state = s
-    self.last_state_time = t
-end
-
-function get_older()
-    local state = self.state
-    
-end
-
-function Cocoa:update_cocoa_table()
-    -- #TODO: #14 Confirme necessidade.
-    print("update_cocoa_table")
-    
+    self.state_timer = 3
 end
 
 function Cocoa:update_collision_shape()
@@ -101,7 +88,6 @@ function Cocoa:check_collision(obj)
        self_botton > obj_top and
        self_top < obj_botton then
         has_collided = true
-        
         if has_collided and obj.type == "chest" then
             scene.score.value = scene.score.value + 1
             self.was_harvested = true
@@ -110,6 +96,24 @@ function Cocoa:check_collision(obj)
 end
 
 function Cocoa:update(dt)
+    self.state_timer = self.state_timer - dt
+    if self.state_timer <= 0 then
+        if self.state == GLOBAL.COCOA.GREEN then
+            self.state = GLOBAL.COCOA.YELLOW
+            self.image = self.cocoa_images.yellow
+            self.state_timer = 4
+        elseif self.state == GLOBAL.COCOA.YELLOW then
+            self.state = GLOBAL.COCOA.RED
+            self.image = self.cocoa_images.red
+            self.state_timer = 6
+        elseif self.state == GLOBAL.COCOA.RED then
+            self.state = GLOBAL.COCOA.PURPLE
+            self.image = self.cocoa_images.purple
+            self.state_timer = 3
+        elseif self.state == GLOBAL.COCOA.PURPLE then
+            self.is_rotten = true
+        end
+    end 
     if self.handling.active then
         self.x = love.mouse.getX() - self.handling.distx
         self.y = love.mouse.getY() - self.handling.disty
@@ -117,15 +121,6 @@ function Cocoa:update(dt)
 end
 
 function Cocoa:draw(x, y)
-    if self.state == GLOBAL.COCOA.GREEN then
-        self.image = self.cocoa_images.green
-    elseif self.state == GLOBAL.COCOA.YELLOW then
-        self.image = self.cocoa_images.yellow
-    elseif self.state == GLOBAL.COCOA.RED then
-        self.image = self.cocoa_images.red
-    elseif self.state == GLOBAL.COCOA.PURPLE then
-        self.image = self.cocoa_images.purple
-    end
     love.graphics.draw(self.image, self.x, self.y, 0, self.side * self.scale_x, self.scale_y, self.offset_x)
     if self.collision_shape.show then
         love.graphics.setColor(self.collision_shape.color)
