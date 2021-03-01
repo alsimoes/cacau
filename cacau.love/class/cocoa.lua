@@ -5,7 +5,8 @@
 
 Cocoa = Object:extend()
 
-function Cocoa:new(x, y, direction)
+function Cocoa:new(spot, x, y, direction)
+    self.spot = spot
     self.image = love.graphics.newImage("assets/dummy_cocoa_green.png")
     self.cocoa_images = {
         yellow = love.graphics.newImage("assets/dummy_cocoa_yellow.png"),

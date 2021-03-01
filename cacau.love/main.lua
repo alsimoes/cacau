@@ -32,6 +32,7 @@ GLOBAL = {
 
 function love.load()
     Object = require("lib.classic")
+   -- dbg = require("lib.love-debugger")
     require "class.scene"
     require "class.player"
     require "class.tree"
@@ -42,8 +43,9 @@ function love.load()
     scene = Scene(player)
     tree  = Tree(GLOBAL.SCREEN.HCENTER, 115)
     chest = Chest(GLOBAL.SCREEN.HCENTER, 650)
-    
 end
+
+--function love.errorhandler(msg) dbg.error(msg, 3) end
 
 function love.keypressed(key, dt)
     if key == "escape" then
@@ -51,14 +53,19 @@ function love.keypressed(key, dt)
     end
 
     if key == "r" then
-        print("[[[[[[[[[[[[[[-- RESTART --]]]]]]]]]]]]]]")
+        print("[[[[[[[[[[[[[[--  RESTART   --]]]]]]]]]]]]]]")
         love.event.quit("restart")
     end
 
     if key == "s" then
         print("[[[[[[[[[[[[[[-- GAME START --]]]]]]]]]]]]]]")
         scene:is_game_over(false)
-        scene:add_cocoa_to_list(dt)
+        -- scene:add_cocoa_to_list(dt)
+    end
+
+    if key == "a" then
+        print("[[[[[[[[[[[[[[-- ADD  COCOA --]]]]]]]]]]]]]]")
+        scene:respawn_cocoas(dt)
     end
 
 end

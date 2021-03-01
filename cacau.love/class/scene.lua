@@ -51,7 +51,7 @@ function Scene:new(player)
             value_x = GLOBAL.SCREEN.WIDTH /2 ,
             value_y = 35,
             value = 0,
-            start_time = 20,
+            start_time = 60,
             remaining_time = 0
         },
         game_over = true
@@ -64,23 +64,21 @@ function Scene:new(player)
     table.insert(self.spot, {id = 3, x = 550, y = 285, direction = GLOBAL.SCALE.INVERTED})
     table.insert(self.spot, {id = 4, x = 555, y = 388, direction = GLOBAL.SCALE.INVERTED})  
 
+    self.respawn_timer = 3
+
     self.list_of_cocoas = {}
+    self.number_of_cocoas = 0
     self.player = player
 
 end
 
-function Scene:respawn_cocoas()
-    -- #TODO: #18 Add respwn mechanics
-end
 
-function Scene:add_cocoa_to_list(dt)
-    -- table.insert(self.list_of_cocoas, Cocoa(460, 235, GLOBAL.SCALE.NORMAL))
-    -- table.insert(self.list_of_cocoas, Cocoa(self.spot[1].x, self.spot[1].y, self.spot[1].direction))
-    -- table.insert(self.list_of_cocoas, Cocoa(self.spot[2].x, self.spot[2].y, self.spot[2].direction))
-    -- table.insert(self.list_of_cocoas, Cocoa(self.spot[3].x, self.spot[3].y, self.spot[3].direction))
-    -- table.insert(self.list_of_cocoas, Cocoa(self.spot[4].x, self.spot[4].y, self.spot[4].direction))
+function Scene:respawn_cocoas(dt)
+    print("76: Scene:respawn_cocoas(dt)")
     for x=1, 4 do
-        table.insert(self.list_of_cocoas, Cocoa(self.spot[x].x, self.spot[x].y, self.spot[x].direction))
+        print("78: for x=1, 4 do")
+        -- table.insert(self.list_of_cocoas, Cocoa(self.spot[x].id, self.spot[x].x, self.spot[x].y, self.spot[x].direction))
+        table.insert(self.list_of_cocoas, Cocoa(unpack(self.spot[x])))
     end
 end
 
@@ -112,6 +110,7 @@ function Scene:update(dt)
     if self.harvesting.game_over == false and self.harvesting.timer.remaining_time > 0 then
         self.harvesting.timer.remaining_time = self.harvesting.timer.remaining_time - dt
         self.harvesting.timer.value = self.harvesting.timer.remaining_time
+        self.respawn_cocoas()
     end
     if self.harvesting.timer.remaining_time <= 0 then 
         self.harvesting.game_over = true
@@ -131,16 +130,6 @@ function Scene:update(dt)
             table.remove(self.list_of_cocoas, i)
         end
     end
-end
-
-function Scene:update_display_hud(p)
-    love.graphics.setColor(p.label_color)
-    love.graphics.setFont(love.graphics.newFont(p.label_size))
-    love.graphics.print(p.label_text, p.label_x, p.label_y)
-    love.graphics.setColor(p.value_color)
-    love.graphics.setFont(love.graphics.newFont(p.value_size))
-    love.graphics.print(p.value, p.value_x, p.value_y)
-    love.graphics.setColor(GLOBAL.SCREEN.COLOR_RESET)
 end
 
 function Scene:draw()
