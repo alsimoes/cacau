@@ -43,7 +43,7 @@ function Scene:new(player)
     self.player = player
 
     self.harvesting = {
-        timer = { -- #FIXME: #12 Implamente the timer.
+        timer = { 
             label_color = {0, 0, 0},
             label_size = 20,
             label_text = "Timer",
@@ -54,15 +54,37 @@ function Scene:new(player)
             value_x = GLOBAL.SCREEN.WIDTH /2 ,
             value_y = 35,
             value = 0,
-            start_time = 10,
+            start_time = 20,
             remaining_time = 0
         },
         game_over = true
     }
+    self.spawning = {
+        spot1 = {
+            occupied = false,
+            x = 460,
+            y = 235
+        },
+        spot2 = {
+            occupied = false,
+            x = 470,
+            y = 385
+        },
+        spot3 = {
+            occupied = false,
+            x = 550,
+            y = 285
+        },
+        spot4 = {
+            occupied = false,
+            x = 550,
+            y = 385
+        },
+    }
 
 end
 
-function Scene:get_list_of_cocoas() -- #TODO: #15 Verificar se está em uso.
+function Scene:get_list_of_cocoas()
     get_cocoas_list = self.list_of_cocoas
 end
 
@@ -70,20 +92,12 @@ function Scene:remove_cocoa_from_list(i)
     table.remove(self.list_of_cocoas, i)
 end
 
-function Scene:total_of_cocoas()
-    local cont = 0
-    for i,cocoa in ipairs(self.list_of_cocoas) do
-        cont = cont + 1
-    end
-    print("Total de cacaus: "..cont)
-    total_of_cocoas = cont
-end
-
 function Scene:add_cocoa_to_list()
-    table.insert(self.list_of_cocoas, Cocoa(460, 235, GLOBAL.SCALE.NORMAL, GLOBAL.COCOA.GREEN))
-    table.insert(self.list_of_cocoas, Cocoa(470, 385, GLOBAL.SCALE.NORMAL, GLOBAL.COCOA.YELLOW))
-    table.insert(self.list_of_cocoas, Cocoa(550, 285, GLOBAL.SCALE.INVERTED, GLOBAL.COCOA.RED))
-    table.insert(self.list_of_cocoas, Cocoa(550, 385, GLOBAL.SCALE.INVERTED, GLOBAL.COCOA.PURPLE))
+    table.insert(self.list_of_cocoas, Cocoa(460, 235, GLOBAL.SCALE.NORMAL))
+    -- table.insert(self.list_of_cocoas, Cocoa(460, 235, GLOBAL.SCALE.NORMAL, GLOBAL.COCOA.GREEN))
+    -- table.insert(self.list_of_cocoas, Cocoa(470, 385, GLOBAL.SCALE.NORMAL, GLOBAL.COCOA.YELLOW))
+    -- table.insert(self.list_of_cocoas, Cocoa(550, 285, GLOBAL.SCALE.INVERTED, GLOBAL.COCOA.RED))
+    -- table.insert(self.list_of_cocoas, Cocoa(550, 385, GLOBAL.SCALE.INVERTED, GLOBAL.COCOA.PURPLE))
 
 end
 
@@ -99,13 +113,9 @@ function Scene:mouse_released(x, y, button)
     end
 end
 
-function Scene:is_game_over(bol)
-    self.harvesting.game_over = bol
+function Scene:start_game()
+    self.harvesting.game_over = false 
     self.score.value = 0
-end
-
-function Scene:is_game_started()
-    is_game_started = self.harvesting.game_over
 end
 
 function Scene:update(dt)
@@ -116,34 +126,31 @@ function Scene:update(dt)
         self.harvesting.timer.remaining_time = self.harvesting.timer.remaining_time - dt
         self.harvesting.timer.value = self.harvesting.timer.remaining_time
     end
-    if self.harvesting.timer.remaining_time <= 0 then 
+    if self.harvesting.timer.remaining_time <= 0 and self.harvesting.game_over == false then
+        print("time's up, game over") 
         self.harvesting.game_over = true
         for i,cocoa in ipairs(self.list_of_cocoas) do
             table.remove(self.list_of_cocoas, i)
         end
         if self.score.value > self.hi_score.value then
             self.hi_score.value = self.score.value
+            local file = love.filesystem.newFile("data.sav")
+            file:open("w")
+            file:write(scene.hi_score.value)
+            print("new hi score is "..scene.hi_score.value)
+            file:close()
+        end
+    else
+        for i,cocoa in ipairs(self.list_of_cocoas) do
+            cocoa:update(dt)
+            cocoa:check_collision(chest)
+            cocoa:check_collision(self.player)
+            cocoa:update_collision_shape()
+            if cocoa.was_harvested then
+                table.remove(self.list_of_cocoas, i)
+            end
         end
     end
-    for i,cocoa in ipairs(self.list_of_cocoas) do
-        cocoa:update(dt)
-        cocoa:check_collision(chest)
-        cocoa:check_collision(self.player)
-        cocoa:update_collision_shape()
-        if cocoa.was_harvested then
-            table.remove(self.list_of_cocoas, i)
-        end
-    end
-end
-
-function Scene:update_display_hud(p)
-    love.graphics.setColor(p.label_color)
-    love.graphics.setFont(love.graphics.newFont(p.label_size))
-    love.graphics.print(p.label_text, p.label_x, p.label_y)
-    love.graphics.setColor(p.value_color)
-    love.graphics.setFont(love.graphics.newFont(p.value_size))
-    love.graphics.print(p.value, p.value_x, p.value_y)
-    love.graphics.setColor(GLOBAL.SCREEN.COLOR_RESET)
 end
 
 function Scene:draw()
@@ -151,13 +158,6 @@ function Scene:draw()
     
     tree:draw()
 
-    for i,cocoa in ipairs(self.list_of_cocoas) do
-        cocoa:draw()
-    end
-
-    chest:draw()
-
-    -- self.update_display_hud(self.hi_score)
     love.graphics.setColor(self.hi_score.label_color)
     love.graphics.setFont(love.graphics.newFont(self.hi_score.label_size))
     love.graphics.print(self.hi_score.label_text, self.hi_score.label_x, self.hi_score.label_y)
@@ -166,23 +166,29 @@ function Scene:draw()
     love.graphics.print(self.hi_score.value, self.hi_score.value_x, self.hi_score.value_y)
     love.graphics.setColor(GLOBAL.SCREEN.COLOR_RESET)
 
-    -- self.update_display_hud(self.score)
-    love.graphics.setColor(self.score.label_color)
-    love.graphics.setFont(love.graphics.newFont(self.score.label_size))
-    love.graphics.print(self.score.label_text, self.score.label_x, self.score.label_y)
-    love.graphics.setColor(self.score.value_color)
-    love.graphics.setFont(love.graphics.newFont(self.score.value_size))
-    love.graphics.print(self.score.value, self.score.value_x, self.score.value_y)
-    love.graphics.setColor(GLOBAL.SCREEN.COLOR_RESET)
+    if self.harvesting.game_over == false then
+        chest:draw()
 
-    -- self.update_display_hud(self.harvesting.timer)
-    love.graphics.setColor(self.harvesting.timer.label_color)
-    love.graphics.setFont(love.graphics.newFont(self.harvesting.timer.label_size))
-    love.graphics.print(self.harvesting.timer.label_text, self.harvesting.timer.label_x, self.harvesting.timer.label_y)
-    love.graphics.setColor(self.harvesting.timer.value_color)
-    love.graphics.setFont(love.graphics.newFont(self.harvesting.timer.value_size))
-    love.graphics.print(string.format("%3.1f",self.harvesting.timer.value), self.harvesting.timer.value_x, self.harvesting.timer.value_y)
-    love.graphics.setColor(GLOBAL.SCREEN.COLOR_RESET)
-    
+        for i,cocoa in ipairs(self.list_of_cocoas) do
+            cocoa:draw()
+        end
+
+        love.graphics.setColor(self.score.label_color)
+        love.graphics.setFont(love.graphics.newFont(self.score.label_size))
+        love.graphics.print(self.score.label_text, self.score.label_x, self.score.label_y)
+        love.graphics.setColor(self.score.value_color)
+        love.graphics.setFont(love.graphics.newFont(self.score.value_size))
+        love.graphics.print(self.score.value, self.score.value_x, self.score.value_y)
+        love.graphics.setColor(GLOBAL.SCREEN.COLOR_RESET)
+
+        love.graphics.setColor(self.harvesting.timer.label_color)
+        love.graphics.setFont(love.graphics.newFont(self.harvesting.timer.label_size))
+        love.graphics.print(self.harvesting.timer.label_text, self.harvesting.timer.label_x, self.harvesting.timer.label_y)
+        love.graphics.setColor(self.harvesting.timer.value_color)
+        love.graphics.setFont(love.graphics.newFont(self.harvesting.timer.value_size))
+        love.graphics.print(string.format("%3.0f",self.harvesting.timer.value), self.harvesting.timer.value_x, self.harvesting.timer.value_y)
+        love.graphics.setColor(GLOBAL.SCREEN.COLOR_RESET)
+    end
+
 end
 

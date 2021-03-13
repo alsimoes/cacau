@@ -5,7 +5,8 @@
 
 Cocoa = Object:extend()
 
-function Cocoa:new(x, y, direcion, s)
+-- function Cocoa:new(x, y, direcion, s)
+function Cocoa:new(x, y, direcion, t)
     self.image = love.graphics.newImage("assets/dummy_cocoa_green.png")
     self.cocoa_images = {
         green = love.graphics.newImage("assets/dummy_cocoa_green.png"),
@@ -44,14 +45,8 @@ function Cocoa:new(x, y, direcion, s)
     }
     self.rotten = false
     self.state = GLOBAL.COCOA.GREEN
-    self.state = s
-    self.last_state_time = t
-end
-
-function Cocoa:update_cocoa_table()
-    -- #TODO: #14 Confirme necessidade.
-    print("update_cocoa_table")
-    
+    print("cocoa is 'green'")
+    self.state_time = GLOBAL.COCOA.GREEN * 3
 end
 
 function Cocoa:update_collision_shape()
@@ -99,12 +94,30 @@ function Cocoa:check_collision(obj)
         
         if has_collided and obj.type == "chest" then
             scene.score.value = scene.score.value + 1
+            print("'cocoa' harvested")
             self.was_harvested = true
+            scene:add_cocoa_to_list()
         end
     end
 end
 
 function Cocoa:update(dt)
+
+    if self.rotten == false then
+        if self.state_time < 0 then
+            self.state = self.state + 1
+            self.state_time = self.state * 3
+            if self.state == GLOBAL.COCOA.YELLOW then
+                print("cocoa is 'yellow'")
+            elseif self.state == GLOBAL.COCOA.RED then
+                print("cocoa is 'red'")
+            elseif self.state == GLOBAL.COCOA.PURPLE then
+                print("cocoa is 'rotten'")
+            end
+        end
+        self.state_time = self.state_time - dt
+    end
+
     if self.handling.active then
         self.x = love.mouse.getX() - self.handling.distx
         self.y = love.mouse.getY() - self.handling.disty

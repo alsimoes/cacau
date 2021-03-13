@@ -43,26 +43,42 @@ function love.load()
     tree  = Tree(GLOBAL.SCREEN.HCENTER, 115)
     chest = Chest(GLOBAL.SCREEN.HCENTER, 650)
     
+    print("PATH: "..love.filesystem.getSource())
+
+    if love.filesystem.getInfo("data.sav", "file")  then
+        print("'data.sav' exists")
+        local file = love.filesystem.newFile("data.sav")
+        file:open("r")
+        data = file:read()
+        print("loaded hi score is "..data)
+        scene.hi_score.value = tonumber(data)
+        file:close()
+    else
+        print("'data.sav' not exists")
+        local file = love.filesystem.newFile("data.sav")
+        file:open("w")
+        file:write(scene.hi_score.value)
+        file:close()
+        print("new hi score file created")
+    end
+
 end
 
 function love.keypressed(key)
     if key == "escape" then
+        print("'esc' pressed")
         love.event.quit(0)
     end
 
     if key == "r" then
-        print("[[[[[[[[[[[[[[-- RESTART --]]]]]]]]]]]]]]")
+        print("'r' pressed") 
         love.event.quit("restart")
     end
 
     if key == "s" then
-        -- #TODO: #13 Implement start game.
-        scene:is_game_over(false)
+        print("'s' pressed")
+        scene:start_game()
         scene:add_cocoa_to_list()
-    end
-
-    if key == "c" then
-        
     end
 
 end
