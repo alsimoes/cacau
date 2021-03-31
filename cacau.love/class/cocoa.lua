@@ -12,7 +12,7 @@ function Cocoa:new(x, y, direcion, t)
         green = love.graphics.newImage("assets/dummy_cocoa_green.png"),
         yellow = love.graphics.newImage("assets/dummy_cocoa_yellow.png"),
         red = love.graphics.newImage("assets/dummy_cocoa_red.png"),
-        purple = love.graphics.newImage("assets/dummy_cocoa_purple.png")
+        rotten = love.graphics.newImage("assets/dummy_cocoa_purple.png")
     }
     self.x = x
     self.y = y
@@ -45,8 +45,7 @@ function Cocoa:new(x, y, direcion, t)
     }
     self.rotten = false
     self.state = GLOBAL.COCOA.GREEN
-    print("cocoa is 'green'")
-    self.state_time = GLOBAL.COCOA.GREEN * 3
+    self.state_time = math.random(GLOBAL.COCOA.GREEN,4)
 end
 
 function Cocoa:update_collision_shape()
@@ -93,10 +92,16 @@ function Cocoa:check_collision(obj)
         has_collided = true
         
         if has_collided and obj.type == "chest" then
-            scene.score.value = scene.score.value + 1
-            print("'cocoa' harvested")
+            if self.state == GLOBAL.COCOA.GREEN then
+                scene:update_score(-1, -1, self.state)
+            elseif self.state == GLOBAL.COCOA.YELLOW then
+                scene:update_score(3, 3, self.state)
+            elseif self.state == GLOBAL.COCOA.RED then
+                scene:update_score(6, 6, self.state)
+            elseif self.state == GLOBAL.COCOA.ROTTEN then
+                scene:update_score(-12, -12, self.state)
+            end
             self.was_harvested = true
-            scene:add_cocoa_to_list()
         end
     end
 end
@@ -106,14 +111,7 @@ function Cocoa:update(dt)
     if self.rotten == false then
         if self.state_time < 0 then
             self.state = self.state + 1
-            self.state_time = self.state * 3
-            if self.state == GLOBAL.COCOA.YELLOW then
-                print("cocoa is 'yellow'")
-            elseif self.state == GLOBAL.COCOA.RED then
-                print("cocoa is 'red'")
-            elseif self.state == GLOBAL.COCOA.PURPLE then
-                print("cocoa is 'rotten'")
-            end
+            self.state_time = math.random(3,6)
         end
         self.state_time = self.state_time - dt
     end
@@ -131,8 +129,8 @@ function Cocoa:draw(x, y)
         self.image = self.cocoa_images.yellow
     elseif self.state == GLOBAL.COCOA.RED then
         self.image = self.cocoa_images.red
-    elseif self.state == GLOBAL.COCOA.PURPLE then
-        self.image = self.cocoa_images.purple
+    elseif self.state == GLOBAL.COCOA.ROTTEN then
+        self.image = self.cocoa_images.rotten
     end
     love.graphics.draw(self.image, self.x, self.y, 0, self.side * self.scale_x, self.scale_y, self.offset_x)
     if self.collision_shape.show then

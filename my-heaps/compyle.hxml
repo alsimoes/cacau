@@ -1,0 +1,6 @@
+-cp src
+-lib heaps
+-python my-heaps.py
+-D windowSize=1024x768
+-D windowTitle=Colhe Cacau!
+-main Main

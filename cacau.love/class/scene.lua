@@ -54,33 +54,18 @@ function Scene:new(player)
             value_x = GLOBAL.SCREEN.WIDTH /2 ,
             value_y = 35,
             value = 0,
-            start_time = 20,
+            start_time = 60,
             remaining_time = 0
         },
         game_over = true
     }
-    self.spawning = {
-        spot1 = {
-            occupied = false,
-            x = 460,
-            y = 235
-        },
-        spot2 = {
-            occupied = false,
-            x = 470,
-            y = 385
-        },
-        spot3 = {
-            occupied = false,
-            x = 550,
-            y = 285
-        },
-        spot4 = {
-            occupied = false,
-            x = 550,
-            y = 385
-        },
-    }
+    
+    self.spawning_time = math.random(0,3)
+    -- self.spawning_spots = {}
+    -- table.insert(self.spawning_spots,{occupied = false, x = 460, y = 235, direction = GLOBAL.SCALE.NORMAL})
+    -- table.insert(self.spawning_spots,{occupied = false, x = 470, y = 385, direction = GLOBAL.SCALE.NORMAL})
+    -- table.insert(self.spawning_spots,{occupied = false, x = 550, y = 285, direction = GLOBAL.SCALE.INVERTED})
+    -- table.insert(self.spawning_spots,{occupied = false, x = 550, y = 385, direction = GLOBAL.SCALE.INVERTED})
 
 end
 
@@ -93,12 +78,25 @@ function Scene:remove_cocoa_from_list(i)
 end
 
 function Scene:add_cocoa_to_list()
-    table.insert(self.list_of_cocoas, Cocoa(460, 235, GLOBAL.SCALE.NORMAL))
-    -- table.insert(self.list_of_cocoas, Cocoa(460, 235, GLOBAL.SCALE.NORMAL, GLOBAL.COCOA.GREEN))
-    -- table.insert(self.list_of_cocoas, Cocoa(470, 385, GLOBAL.SCALE.NORMAL, GLOBAL.COCOA.YELLOW))
-    -- table.insert(self.list_of_cocoas, Cocoa(550, 285, GLOBAL.SCALE.INVERTED, GLOBAL.COCOA.RED))
-    -- table.insert(self.list_of_cocoas, Cocoa(550, 385, GLOBAL.SCALE.INVERTED, GLOBAL.COCOA.PURPLE))
+    print("start add_cocoa_to_list()")
 
+
+end
+
+function Scene:update_score(s, t, c)
+    self.score.value = self.score.value + s
+    self.harvesting.timer.remaining_time = self.harvesting.timer.remaining_time + t
+    local tipo = ""
+    if c == GLOBAL.COCOA.GREEN then
+        tipo = GLOBAL.COCOA.GREEN_TEXT
+    elseif c == GLOBAL.COCOA.YELLOW then
+        tipo = GLOBAL.COCOA.YELLOW_TEXT
+    elseif c == GLOBAL.COCOA.RED then
+        tipo = GLOBAL.COCOA.RED_TEXT
+    elseif c == GLOBAL.COCOA.ROTTEN then
+        tipo = GLOBAL.COCOA.ROTTEN_TEXT
+    end
+    print("harvested "..tipo.." cocoa: score "..s..", time "..t)
 end
 
 function Scene:mouse_pressed(x, y, button, istouch)
@@ -141,6 +139,14 @@ function Scene:update(dt)
             file:close()
         end
     else
+        if self.harvesting.game_over == false then
+            if self.spawning_time <= 0 then
+                self.add_cocoa_to_list()
+            else
+                self.spawning_time = self.spawning_time - dt
+            end    
+        end
+        
         for i,cocoa in ipairs(self.list_of_cocoas) do
             cocoa:update(dt)
             cocoa:check_collision(chest)

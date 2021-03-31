@@ -24,9 +24,13 @@ GLOBAL = {
     },
     COCOA = {
         GREEN = 1,
+        GREEN_TEXT = "green",
         YELLOW = 2,
+        YELLOW_TEXT = "yellow",
         RED = 3,
-        PURPLE = 4,
+        RED_TEXT = "red",
+        ROTTEN = 4,
+        ROTTEN_TEXT = "rotten",
     }
 }
 
@@ -42,8 +46,6 @@ function love.load()
     scene = Scene(player)
     tree  = Tree(GLOBAL.SCREEN.HCENTER, 115)
     chest = Chest(GLOBAL.SCREEN.HCENTER, 650)
-    
-    print("PATH: "..love.filesystem.getSource())
 
     if love.filesystem.getInfo("data.sav", "file")  then
         print("'data.sav' exists")
@@ -78,7 +80,6 @@ function love.keypressed(key)
     if key == "s" then
         print("'s' pressed")
         scene:start_game()
-        scene:add_cocoa_to_list()
     end
 
 end
