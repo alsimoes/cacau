@@ -48,15 +48,14 @@ class Menu extends Screen {
     override function update(dt:Float) {
         time += dt;
 
-        if (time <= 1.0){
-            if (fx_scale >= 1.0 && fx_scale < 1.07) {
-                fx_scale += dt;
-                trace(fx_scale);
+        if (time <= 0.5){
+            if (fx_scale <= 1.0 || fx_scale < 1.01) {
+                fx_scale += dt/2;
+                trace("fx_scale (+): " + fx_scale);
             }
-            //else if (fx_scale >= 1.0 && fx_scale <= 1.2){
-            else if (fx_scale >= 1.07 && fx_scale > 1.0) {
-                fx_scale -= dt;
-                trace(fx_scale);
+            if (fx_scale <= 1.01) {
+                fx_scale -= dt/2;
+                trace("fx_scale (-): " + fx_scale);
             }
             tf_start.scale(fx_scale);
             time = 0;
