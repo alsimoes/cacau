@@ -10,7 +10,6 @@ class Menu extends Screen {
     var tf_start: h2d.Text;
     var tf_exit: h2d.Text;
     var tf_title: h2d.Text;
-    var fx_scale: Float = 1.0;
 
     override function init() {
         trace("Menu init()");
@@ -46,20 +45,6 @@ class Menu extends Screen {
     }
 
     override function update(dt:Float) {
-        time += dt;
-
-        if (time <= 0.5){
-            if (fx_scale <= 1.0 || fx_scale < 1.01) {
-                fx_scale += dt/2;
-                trace("fx_scale (+): " + fx_scale);
-            }
-            if (fx_scale <= 1.01) {
-                fx_scale -= dt/2;
-                trace("fx_scale (-): " + fx_scale);
-            }
-            tf_start.scale(fx_scale);
-            time = 0;
-        }
         
         if (hxd.Key.isPressed(27)) {
             trace("Menu update(): esc wasPressed");
@@ -68,6 +53,7 @@ class Menu extends Screen {
 
         if (hxd.Key.isPressed(13)) {
             trace("Menu update(): ender wasPressed");
+            
         }
 
     }
